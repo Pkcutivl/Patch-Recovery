@@ -106,7 +106,7 @@
 
             // Preserve critical baseline upload/storage/playback keys if upstream returned NO_CHANGE
             const baselineDefaults = {
-                "functions_domains": "["https://api.locketcamera.com"]",
+                "functions_domains": '["https://api.locketcamera.com"]',
                 "storage_bucket": "gs://locket-img",
                 "storage_bucket_video": "gs://locket-video",
                 "video_upload_cache_control": "public, max-age=604800",
