@@ -1,10 +1,17 @@
-#!name=Locket Gold VIP
-#!desc=Locket Gold Clean Entitlements (Zero external API, No crash)
+#!name=Locket Gold VIP & AI 60s
+#!desc=Locket Gold Entitlements + Firebase Remote Config 60s Video, 94 AI Filters & Live Photos (Shadowrocket / Surge / Loon)
+#!category=Tweak
 
 [MITM]
-hostname = %APPEND% api.revenuecat.com
+hostname = %APPEND% api.revenuecat.com, firebaseremoteconfig.googleapis.com
 
 [Script]
-LocketRequest = type=http-request, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, timeout=10
+# Layer 0: Strip ETag / If-None-Match cache headers & Firebase lastKnownTemplateVersion (prevent 304 / NO_CHANGE)
+LocketRequestRC = type=http-request, pattern=^https:\/\/api\.revenuecat\.com(?::\d+)?\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, timeout=10
+LocketRequestFB = type=http-request, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com(?::\d+)?\/v1\/projects\/[^\/]+\/namespaces\/[^\/:]+:fetch(?:\?.*)?$, script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
 
-LocketResponse = type=http-response, pattern=^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$), script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, requires-body=1, max-size=0, timeout=10
+# Layer 1: RevenueCat In-App Purchases & Subscriber Entitlements
+LocketReceipts = type=http-response, pattern=^https:\/\/api\.revenuecat\.com(?::\d+)?\/.+\/(receipts(?:\?.*)?$|subscribers\/[^\/?]+(?:\?.*)?$), script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
+
+# Layer 2: Firebase Remote Config (60s Video, 94 AI Filters Catalog, Live Photos, Feature Gates)
+LocketFirebaseConfig = type=http-response, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com(?::\d+)?\/v1\/projects\/[^\/]+\/namespaces\/[^\/:]+:fetch(?:\?.*)?$, script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
