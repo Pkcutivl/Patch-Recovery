@@ -3,15 +3,15 @@
 #!category=Tweak
 
 [MITM]
-hostname = %APPEND% api.revenuecat.com, firebaseremoteconfig.googleapis.com
+hostname = %APPEND% api.revenuecat.com, firebaseremoteconfig.googleapis.com, api.locketcamera.com
 
 [Script]
 # Layer 0: Header-only cache strip (no request-body mutation -> prevents 400 Bad Request)
-LocketRequestRC = type=http-request, pattern=^https:\/\/api\.revenuecat\.com(?::\d+)?\/.+\/(receipts|subscribers), script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, timeout=10
-LocketRequestFB = type=http-request, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com(?::\d+)?\/v1\/projects\/[^\/]+\/namespaces\/[^\/:]+:fetch(?:\?.*)?$, script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, timeout=10
+LocketRequestRC = type=http-request, pattern=^https?:\/\/api\.revenuecat\.com(?::\d+)?\/.*(receipts|subscribers), script-path=https://cdn.jsdelivr.net/gh/Pkcutivl/Patch-Recovery@locket/Locket_clean.js, timeout=10
+LocketRequestFB = type=http-request, pattern=^https?:\/\/firebaseremoteconfig\.googleapis\.com(?::\d+)?\/.*:fetch, script-path=https://cdn.jsdelivr.net/gh/Pkcutivl/Patch-Recovery@locket/Locket_clean.js, timeout=10
 
 # Layer 1: RevenueCat In-App Purchases & Subscriber Entitlements
-LocketReceipts = type=http-response, pattern=^https:\/\/api\.revenuecat\.com(?::\d+)?\/.+\/(receipts(?:\?.*)?$|subscribers\/[^\/?]+(?:\?.*)?$), script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
+LocketReceipts = type=http-response, pattern=^https?:\/\/api\.revenuecat\.com(?::\d+)?\/.*(receipts|subscribers), script-path=https://cdn.jsdelivr.net/gh/Pkcutivl/Patch-Recovery@locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
 
 # Layer 2: Firebase Remote Config (60s Video, 94 AI Filters Catalog, Feature Gates)
-LocketFirebaseConfig = type=http-response, pattern=^https:\/\/firebaseremoteconfig\.googleapis\.com(?::\d+)?\/v1\/projects\/[^\/]+\/namespaces\/[^\/:]+:fetch(?:\?.*)?$, script-path=https://raw.githubusercontent.com/Pkcutivl/Patch-Recovery/locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
+LocketFirebaseConfig = type=http-response, pattern=^https?:\/\/firebaseremoteconfig\.googleapis\.com(?::\d+)?\/.*:fetch, script-path=https://cdn.jsdelivr.net/gh/Pkcutivl/Patch-Recovery@locket/Locket_clean.js, requires-body=1, max-size=524288, timeout=10
